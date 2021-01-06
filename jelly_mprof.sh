@@ -6,33 +6,33 @@ for i in `seq 1 50`;
 do
     echo "========== tour $i ===========";
     echo "GENOMIC";
-    mprof run jellyfish count -m 30 -s 100M -t 10 -C ecoli_150bp_100x_unitigs.fa;
+    mprof run bench/tools/jellyfish-2.3.0/bin/jellyfish count -m 30 -s 100M -t 10 -C ecoli_150bp_100x_unitigs.fa;
     python3 parser.py -d mprofile_* -w jelly_build.txt
     rm -r mprofile_*;
 
-    mprof run jellyfish query mer_counts.jf -s ecoli_genomic.fastq;
+    mprof run bench/tools/jellyfish-2.3.0/bin/jellyfish query mer_counts.jf -s ecoli_genomic.fastq;
     python3 parser.py -d mprofile_* -w jelly_genomic.txt
     rm -r mprofile_*;
 
     rm mer_counts.jf;
     
     echo "FULL RANDOM";
-    mprof run jellyfish count -m 30 -s 100M -t 10 -C ecoli_150bp_100x_unitigs.fa;
+    mprof run bench/tools/jellyfish-2.3.0/bin/jellyfish count -m 30 -s 100M -t 10 -C ecoli_150bp_100x_unitigs.fa;
     python3 parser.py -d mprofile_* -w jelly_build.txt
     rm -r mprofile_*;
 
-    mprof run jellyfish query mer_counts.jf -s ecoli_full_random_.fastq;
+    mprof run bench/tools/jellyfish-2.3.0/bin/jellyfish query mer_counts.jf -s ecoli_full_random_.fastq;
     python3 parser.py -d mprofile_* -w jelly_full_random.txt
     rm -r mprofile_*;
 
     rm mer_counts.jf;
     
     echo "RANDOM PRESENT";
-    mprof run jellyfish count -m 30 -s 100M -t 10 -C ecoli_150bp_100x_unitigs.fa;
+    mprof run bench/tools/jellyfish-2.3.0/bin/jellyfish count -m 30 -s 100M -t 10 -C ecoli_150bp_100x_unitigs.fa;
     python3 parser.py -d mprofile_* -w jelly_build.txt
     rm -r mprofile_*;
 
-    mprof run jellyfish query mer_counts.jf -s ecoli_random_present.fastq;
+    mprof run bench/tools/jellyfish-2.3.0/bin/jellyfish query mer_counts.jf -s ecoli_random_present.fastq;
     python3 parser.py -d mprofile_* -w jelly_random_present.txt
     rm -r mprofile_*;
 

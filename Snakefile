@@ -4,7 +4,8 @@ import os
 
 WORKDIR="bench"
 
-rule all:
+
+rule prepare_tools:
   input:
     f"{WORKDIR}/tools/blight/bench_blight",
     f"{WORKDIR}/tools/jellyfish-2.3.0/bin/jellyfish"
