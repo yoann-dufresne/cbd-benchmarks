@@ -2,26 +2,26 @@
 
 rm -r wdir/ 
 
-for i in `seq 1 2`;
+for i in `seq 1 50`;
 do
     echo "========== tour $i ===========";
     echo "GENOMIC";
     mkdir wdir/
-    Blight/bench_blight -g ecoli_150bp_100x_unitigs.fa -q ecoli_genomic.fastq  -k 30 -t 10 > test.txt
+    bench/tools/blight/bench_blight -g ecoli_150bp_100x_unitigs.fa -q ecoli_genomic.fastq  -k 30 -t 10 > test.txt
     rm -r wdir/
     python3 parser_blight.py -q test.txt -t build.txt -w query_genomic.txt -s space_genomic.txt
     rm test.txt
     
     echo "FULL RANDOM";
     mkdir wdir/
-    Blight/bench_blight -g ecoli_150bp_100x_unitigs.fa -q ecoli_full_random_.fastq  -k 30 -t 10 > test.txt;
+    bench/tools/blight/bench_blight -g ecoli_150bp_100x_unitigs.fa -q ecoli_full_random_.fastq  -k 30 -t 10 > test.txt;
     rm -r wdir/
     python3 parser_blight.py -q test.txt -t build.txt -w query_full_random.txt -s space_full_random.txt
     rm test.txt
 
     echo "RANDOM PRESENT";
     mkdir wdir/
-    Blight/bench_blight -g ecoli_150bp_100x_unitigs.fa -q ecoli_random_present.fastq  -k 30 -t 10 > test.txt;
+    bench/tools/blight/bench_blight -g ecoli_150bp_100x_unitigs.fa -q ecoli_random_present.fastq  -k 30 -t 10 > test.txt;
     rm -r wdir/
     python3 parser_blight.py -q test.txt -t build.txt -w query_random_present.txt -s space_random_present.txt
     rm test.txt
