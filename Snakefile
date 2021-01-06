@@ -6,7 +6,8 @@ WORKDIR="bench"
 
 rule all:
   input:
-    f"{WORKDIR}/tools/blight/bench_blight"
+    f"{WORKDIR}/tools/blight/bench_blight",
+    f"{WORKDIR}/tools/jellyfish-2.3.0/bin/jellyfish"
 
 
 # Download Blight and compile
@@ -21,6 +22,21 @@ rule setup_blight:
     "git clone --depth 1  https://github.com/Malfoy/Blight {wildcards.path}/tools/blight && "
     "cd {wildcards.path}/tools/blight && "
     "make -j {threads}"
+
+
+# Download Jellyfish
+rule setup_jellyfish:
+  input:
+    "{path}/tools/.ready.lock"
+  output:
+    "{path}/tools/jellyfish-2.3.0/bin/jellyfish"
+  threads:
+    workflow.cores
+  shell:
+    "cd {wildcards.path}/tools/ && "
+    "wget https://github.com/gmarcais/Jellyfish/releases/download/v2.3.0/jellyfish-2.3.0.tar.gz && "
+    "tar -xvf jellyfish-2.3.0.tar.gz && cd jellyfish-2.3.0 && "
+    "./configure --prefix=$PWD && make -j {threads}"
 
 
 # Create directory tree
