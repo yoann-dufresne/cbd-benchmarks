@@ -1,0 +1,5 @@
+#snakemake
+.snakemake/
+
+#project related
+bench/
