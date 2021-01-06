@@ -9,22 +9,22 @@ do
     mkdir wdir/
     mprof run bench/tools/blight/bench_blight -g ecoli_150bp_100x_unitigs.fa -q ecoli_genomic.fastq  -k 30 -t 10;
     rm -r wdir/
-    python3 parser.py -d mprofile_* -w blight_genomic_space.txt
-    rm mprof_*;
+    python3 parser.py -d mprof* -w blight_genomic_space.txt
+    rm mprof*;
     
     echo "FULL RANDOM";
     mkdir wdir/
     mprof run bench/tools/blight/bench_blight -g ecoli_150bp_100x_unitigs.fa -q ecoli_full_random_.fastq  -k 30 -t 10;
     rm -r wdir/
-    python3 parser.py -d mprofile_* -w blight_full_random_space.txt
+    python3 parser.py -d mprof* -w blight_full_random_space.txt
     rm mprof*;
 
     echo "RANDOM PRESENT";
     mkdir wdir/
     mprof run bench/tools/blight/bench_blight -g ecoli_150bp_100x_unitigs.fa -q ecoli_random_present.fastq  -k 30 -t 10;
     rm -r wdir/
-    python3 parser.py -d mprofile_* -w blight_random_present_space.txt
-    rm mprof_*;
+    python3 parser.py -d mprof* -w blight_random_present_space.txt
+    rm mprof*;
 done
 
 echo "=== MOYENNAGE ==="
