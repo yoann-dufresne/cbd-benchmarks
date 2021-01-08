@@ -16,7 +16,7 @@ rule all:
 
 rule bcalm_preprocess:
   input:
-    soft=f"{bcalm}",
+    soft=bcalm,
     fa="{filename}.fasta"
   output:
     "{filename}.k{k}.unitigs.fa"
@@ -28,9 +28,9 @@ rule bcalm_preprocess:
 
 rule prepare_tools:
   input:
-    f"{WORKDIR}/tools/blight/bench_blight"
+    f"{WORKDIR}/tools/blight/bench_blight",
     f"{WORKDIR}/tools/jellyfish-2.3.0/bin/jellyfish"
-
+  
 
 # Download Blight and compile
 rule setup_blight:
@@ -44,7 +44,7 @@ rule setup_blight:
   shell:
     "git clone --depth 1  https://github.com/Malfoy/Blight {wildcards.path}/tools/blight && "
     "cd {wildcards.path}/tools/blight && "
-    "make -j {threads}"
+    "make -j {threads} "
 
 
 # Download Jellyfish
@@ -59,7 +59,7 @@ rule setup_jellyfish:
     "cd {wildcards.path}/tools/ && "
     "wget https://github.com/gmarcais/Jellyfish/releases/download/v2.3.0/jellyfish-2.3.0.tar.gz && "
     "tar -xvf jellyfish-2.3.0.tar.gz && cd jellyfish-2.3.0 && "
-    "./configure --prefix=$PWD && make -j {threads}"
+    "./configure --prefix=$PWD && make -j {threads} "
 
 
 rule setup_bcalm:
