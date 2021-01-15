@@ -3,13 +3,52 @@ import os
 
 
 WORKDIR="bench"
+INPUT_DATA="small_ecoli.fasta"
+nb_exec=10
+
+
 
 bcalm=f"{WORKDIR}/tools/bcalm/build/bcalm"
+blight=f"{WORKDIR}/tools/blight/bench_blight"
+
+
 
 
 rule all:
   input:
-    "small_ecoli.k31.unitigs.fa"
+    f"{WORKDIR}/results/small_ecoli.k31.small_ecoli_blight_parsed_10.txt"
+
+
+# ----- Multiple executions -----
+
+rule multi_profile:
+  input:
+    "{path}/{query_file}.fasta",
+    expand("{{path}}/{{file}}.k{{k}}.{{query_file}}_{val}.mprof", val=range(nb_exec))
+  output:
+    blight_mprof=f"{{path}}/{{file}}.k{{k}}.{{query_file}}_blight_parsed_{nb_exec}.txt"
+  run:
+    for i in range(nb_exec):
+      shell(f"python3 scripts/mprof_parser.py -d {{wildcards.path}}/{{wildcards.file}}.k{{wildcards.k}}.{{wildcards.query_file}}_{i}.mprof -w {{output}}")
+
+
+# ----- Software processing -----
+
+rule profile_blight:
+  input:
+    soft=blight,
+    unitigs="{path}/{file}.k{k}.unitigs.fa",
+    query="{path}/{query}.fasta"
+  output:
+    stdout="{path}/{file}.k{k}.{query}_{val}.stdout.txt",
+    mprof="{path}/{file}.k{k}.{query}_{val}.mprof"
+  threads:
+    workflow.cores
+  run:
+    shell("mkdir -p wdir")
+    shell("mprof run -o {output.mprof} {input.soft} -g {input.unitigs} -q {input.query} -k {wildcards.k} -t {threads} > {output.stdout}")
+    shell("rm -rf wdir")
+
 
 
 # ----- Data preprocess -----
@@ -79,14 +118,17 @@ rule setup_bcalm:
 
 # Create directory tree
 rule set_workdir:
+  input:
+    INPUT_DATA
   output:
     "{path}/tools/.ready.lock",
-    "{path}/results/.ready.lock"
+    "{path}/results/.ready.lock",
+    "{path}/results/" + INPUT_DATA.split("/")[-1]
   run:
-    if os.path.exists(f"{wildcards.path}"):
-      shell(f"rm -rf {wildcards.path}")
-
-    shell("mkdir {wildcards.path}")
-    shell("mkdir {wildcards.path}/tools && touch {wildcards.path}/tools/.ready.lock")
-    shell("mkdir {wildcards.path}/results && touch {wildcards.path}/results/.ready.lock")
-    shell("tree {wildcards.path}")
+    shell(f"rm -rf {wildcards.path}")
+    shell("mkdir -p {wildcards.path}/tools && touch {wildcards.path}/tools/.ready.lock")
+    shell("mkdir -p {wildcards.path}/results && touch {wildcards.path}/results/.ready.lock")
+    if INPUT_DATA[0] != '/':
+      shell("ln -s $PWD/{input} {wildcards.path}/results/" + INPUT_DATA.split("/")[-1])
+    else:
+      shell("ln -s {input} {wildcards.path}/results/" + INPUT_DATA.split("/")[-1])
