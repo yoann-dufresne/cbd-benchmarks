@@ -9,47 +9,54 @@ for i in `seq 1 50`;
 do
     echo "========== tour $i ===========";
     echo "++ CONTAINS  ++";
-    ConwayBromageLib/contains ecoli_random_present.fastq cbl_random_present_contains.txt buildTime.txt
+
+#modification : ./contains fichier_où_on_cherche fichier_de_test fichier_stockage_temps_de_test fichier_stockage_temps_de_construction
+    ./contains ecoli_150bp_100x.SORTED.txt ecoli_random_present.fastq cbl_random_present_contains.txt buildTime.txt
     
-    ConwayBromageLib/contains ecoli_full_random_.fastq cbl_full_random_contains.txt buildTime.txt
+    ./contains ecoli_150bp_100x.SORTED.txt ecoli_full_random_.fastq cbl_full_random_contains.txt buildTime.txt
     
-    ConwayBromageLib/contains ecoli_genomic.fastq cbl_genomic_contains.txt buildTime.txt
+    ./contains ecoli_150bp_100x.SORTED.txt ecoli_genomic.fastq cbl_genomic_contains.txt buildTime.txt
     
     echo "++ SUCCESSORS  ++"
-    ConwayBromageLib/successors ecoli_random_present.fastq cbl_random_present_successors.txt buildTime.txt
+#pareil pour successors
+    ./successors ecoli_150bp_100x.SORTED.txt ecoli_random_present.fastq cbl_random_present_successors.txt buildTime.txt
     
-    ConwayBromageLib/successors ecoli_full_random_.fastq cbl_full_random_successors.txt buildTime.txt
+    ./successors ecoli_150bp_100x.SORTED.txt ecoli_full_random_.fastq cbl_full_random_successors.txt buildTime.txt
     
-    ConwayBromageLib/successors ecoli_genomic.fastq cbl_genomic_successors.txt buildTime.txt
+    ./successors ecoli_150bp_100x.SORTED.txt ecoli_genomic.fastq cbl_genomic_successors.txt buildTime.txt
 
     echo "++ CONTAINS MPROF  ++";
-    mprof run ConwayBromageLib/contains_for_space ecoli_random_present.fastq
+    
+#modification : ./contains_for_space fichier_où_on_cherche fichier_de_test
+    mprof run ./contains_for_space ecoli_150bp_100x.SORTED.txt ecoli_random_present.fastq
     python3 parser.py -d mprofile_* -w cbl_random_present_contains_mprof.txt
     ls
     rm -r mprofile_*;
 
-    mprof run ConwayBromageLib/contains_for_space ecoli_full_random_.fastq
+    mprof run ./contains_for_space ecoli_150bp_100x.SORTED.txt ecoli_full_random_.fastq
     python3 parser.py -d mprofile_* -w cbl_full_random_contains_mprof.txt
     ls
     rm -r mprofile_*;
     
-    mprof run ConwayBromageLib/contains_for_space ecoli_genomic.fastq
+    mprof run ./contains_for_space ecoli_150bp_100x.SORTED.txt ecoli_genomic.fastq
     python3 parser.py -d mprofile_* -w cbl_genomic_contains_mprof.txt
     ls
     rm -r mprofile_*;
     
     echo "++ SUCCESSORS MPROF  ++"
-    mprof run ConwayBromageLib/successors_for_space ecoli_random_present.fastq
+
+#pareil pour successors_for_space
+    mprof run ./successors_for_space ecoli_150bp_100x.SORTED.txt ecoli_random_present.fastq
     python3 parser.py -d mprofile_* -w cbl_random_present_successors_mprof.txt
     ls
     rm -r mprofile_*;
     
-    mprof run ConwayBromageLib/successors_for_space ecoli_full_random_.fastq
+    mprof run ./successors_for_space ecoli_150bp_100x.SORTED.txt ecoli_full_random_.fastq
     python3 parser.py -d mprofile_* -w cbl_full_random_successors_mprof.txt
     ls
     rm -r mprofile_*;
     
-    mprof run ConwayBromageLib/successors_for_space ecoli_genomic.fastq
+    mprof run ./successors_for_space ecoli_150bp_100x.SORTED.txt ecoli_genomic.fastq
     python3 parser.py -d mprofile_* -w cbl_genomic_successorscontains_mprof.txt
     ls
     rm -r mprofile_*;
