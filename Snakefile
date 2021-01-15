@@ -4,19 +4,22 @@ import os
 
 WORKDIR="bench"
 INPUT_DATA="small_ecoli.fasta"
-nb_exec=10
+nb_exec=3
 
 
 
 bcalm=f"{WORKDIR}/tools/bcalm/build/bcalm"
 blight=f"{WORKDIR}/tools/blight/bench_blight"
+jellyfish=f"{WORKDIR}/tools/jellyfish-2.3.0/bin/jellyfish"
 
 
 
 
 rule all:
   input:
-    f"{WORKDIR}/results/small_ecoli.k31.small_ecoli_blight_parsed_10.txt"
+    f"{WORKDIR}/results/small_ecoli.k31/small_ecoli_blight_average_{nb_exec}.txt",
+    f"{WORKDIR}/results/small_ecoli.k31/small_ecoli_jellybuild_average_{nb_exec}.txt",
+    f"{WORKDIR}/results/small_ecoli.k31/small_ecoli_jellyquery_average_{nb_exec}.txt"
 
 
 # ----- Multiple executions -----
@@ -24,12 +27,15 @@ rule all:
 rule multi_profile:
   input:
     "{path}/{query_file}.fasta",
-    expand("{{path}}/{{file}}.k{{k}}.{{query_file}}_{val}.mprof", val=range(nb_exec))
+    expand("{{path}}/{{file}}.k{{k}}/{{query_file}}_{val}.{{soft}}.mprof", val=range(nb_exec))
   output:
-    blight_mprof=f"{{path}}/{{file}}.k{{k}}.{{query_file}}_blight_parsed_{nb_exec}.txt"
+    mprof=f"{{path}}/{{file}}.k{{k}}/{{query_file}}_{{soft}}_parsed_{nb_exec}.txt",
+    avg=f"{{path}}/{{file}}.k{{k}}/{{query_file}}_{{soft}}_average_{nb_exec}.txt"
+  threads: 1
   run:
     for i in range(nb_exec):
-      shell(f"python3 scripts/mprof_parser.py -d {{wildcards.path}}/{{wildcards.file}}.k{{wildcards.k}}.{{wildcards.query_file}}_{i}.mprof -w {{output}}")
+      shell(f"python3 scripts/mprof_parser.py -d {{wildcards.path}}/{{wildcards.file}}.k{{wildcards.k}}/{{wildcards.query_file}}_{i}.{{wildcards.soft}}.mprof -w {{output.mprof}}")
+    shell("python3 scripts/averaging.py -q {output.mprof} -w {output.avg}")
 
 
 # ----- Software processing -----
@@ -40,14 +46,32 @@ rule profile_blight:
     unitigs="{path}/{file}.k{k}.unitigs.fa",
     query="{path}/{query}.fasta"
   output:
-    stdout="{path}/{file}.k{k}.{query}_{val}.stdout.txt",
-    mprof="{path}/{file}.k{k}.{query}_{val}.mprof"
+    stdout="{path}/{file}.k{k}/{query}_{val}.blight.stdout.txt",
+    mprof="{path}/{file}.k{k}/{query}_{val}.blight.mprof"
   threads:
     workflow.cores
   run:
     shell("mkdir -p wdir")
     shell("mprof run -o {output.mprof} {input.soft} -g {input.unitigs} -q {input.query} -k {wildcards.k} -t {threads} > {output.stdout}")
-    shell("rm -rf wdir")
+    shell("rm -rf wdir {input.unitigs}*.glue.*")
+
+
+rule profile_jellyfish:
+  input:
+    soft=jellyfish,
+    unitigs="{path}/{file}.k{k}.unitigs.fa",
+    query="{path}/{query}.fasta"
+  output:
+    stdout_build="{path}/{file}.k{k}/{query}_{val}.jellybuild.stdout.txt",
+    mprof_build="{path}/{file}.k{k}/{query}_{val}.jellybuild.mprof",
+    stdout_query="{path}/{file}.k{k}/{query}_{val}.jellyquery.stdout.txt",
+    mprof_query="{path}/{file}.k{k}/{query}_{val}.jellyquery.mprof"
+  threads:
+    workflow.cores
+  run:
+    shell("mprof run -o {output.mprof_build} {input.soft} count -s 100M -C {input.unitigs} -m {wildcards.k} -t {threads} -o {input.unitigs}.jf > {output.stdout_build}")
+    shell("mprof run -o {output.mprof_query} {input.soft} query {input.unitigs}.jf -s {input.query} > {output.stdout_query}")
+    shell("rm -f {input.unitigs}.jf")
 
 
 

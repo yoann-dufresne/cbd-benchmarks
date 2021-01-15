@@ -23,7 +23,7 @@ def getLen(dat_file):
         memory.append(float(sp[1]))
         time.append(float(sp[2]))
     file.close()
-    return [memory, time]
+    return memory, time
 
 def main():
     args = parse_args()
@@ -36,8 +36,8 @@ def main():
     print("{}\n".format(duration))
     
     writing = open(args.writing_file, "a")#debut | fin | duree | espece memoire occupe fin | plus gros pic memoire
-    writing.write("\n{}|{}|{}|{}|{}".format(spliterS, spliterE, duration, dataMem[-10], max(dataMem)))
-    print("{} | {} | {} | {} | {}\n".format(spliterS, spliterE, duration, dataMem[-10], max(dataMem)))
+    writing.write("\n{}|{}|{}|{}|{}".format(spliterS, spliterE, duration, max(dataMem), dataMem[-1]))
+    print("{} | {} | {} | {} | {}\n".format(spliterS, spliterE, duration, max(dataMem), dataMem[-1]))
     writing.close()
 
 if __name__ == "__main__":

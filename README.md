@@ -3,7 +3,10 @@
 
 ## Dependancies
 
+Python:
 - Snakemake
+- mprof  
+other:
 - wget
 - tar
 - git
