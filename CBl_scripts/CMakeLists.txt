@@ -15,9 +15,15 @@ add_executable(successors successors.cpp)
 add_executable(contains_for_space contains_for_space.cpp)
 add_executable(successors_for_space successors_for_space.cpp)
 
+add_executable(txtSorter FileSorter.cpp)
+add_executable(testGeneration KmerListGenerator.cpp)
+
 add_subdirectory(ConwayBromageLib) #Where ConwayBromageLib contains CBl CMakeLists.txt 
 
 target_link_libraries(contains cbl)    #the name of the CBl library is cbl
 target_link_libraries(successors cbl)    #the name of the CBl library is cbl
 target_link_libraries(contains_for_space cbl)    #the name of the CBl library is cbl
 target_link_libraries(successors_for_space cbl)    #the name of the CBl library is cbl
+
+target_link_libraries(txtSorter cbl)    #the name of the CBl library is cbl
+target_link_libraries(testGeneration cbl)    #the name of the CBl library is cbl
