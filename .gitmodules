@@ -1,0 +1,3 @@
+[submodule "ConwayBromageLib"]
+	path = ConwayBromageLib
+	url = https://github.com/yoann-dufresne/ConwayBromageLib.git
