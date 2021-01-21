@@ -10,7 +10,7 @@
 #include <random>
 #include <chrono>
 #include "ConwayBromageLib.h"
-#include <lest/lest_basic.hpp>
+// #include <lest/lest_basic.hpp>
 #include <vector>
 #include <bitset>
 #include <sdsl/sd_vector.hpp>
@@ -20,7 +20,7 @@
 
 using namespace std;
 using namespace sdsl;
-using namespace lest;
+// using namespace lest;
 using namespace std::chrono;
 
 // k-mer size : always 31 mers

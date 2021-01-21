@@ -10,7 +10,7 @@
 #include <random>
 #include <chrono>
 #include "ConwayBromageLib.h"
-#include <lest/lest_basic.hpp>
+// #include <lest/lest_basic.hpp>
 #include <vector>
 #include <bitset>
 #include <sdsl/sd_vector.hpp>
@@ -20,7 +20,7 @@
 
 using namespace std;
 using namespace sdsl;
-using namespace lest;
+// using namespace lest;
 using namespace std::chrono;
 
 // k-mer size : always 31 mers
@@ -56,13 +56,11 @@ double run(string query, const ConwayBromage &cb){
 
     auto a = chrono::high_resolution_clock::now();
     uint64_t len = v.size();
-    //cout << "vector's size : " << len << endl;
     for(int i = 0; i < len; i++){
         cb.contains(v[i]);
     }
     auto b = chrono::high_resolution_clock::now();
     double elapsed = chrono::duration_cast<chrono::microseconds>(b-a).count();
-    cout << "run time : " << elapsed << "s for : " << query << endl;
     return elapsed;
 }
 /*
@@ -77,23 +75,8 @@ int main(int n, char *params[]){
         cout << params[i] << endl;
     }*/
     cout << "Nombre de parametre d'entrees : " << n << endl;
-    ofstream outBuildTime(params[4], ios::app);
-    //définition gestionnaire de k-mers
     KmerManipulatorACTG km_ecoli(SIZE);
-    //création de l'objet et mesure du temps
-    auto a = chrono::high_resolution_clock::now();
     ConwayBromage cb_ecoli (file, &km_ecoli);
-    auto b = chrono::high_resolution_clock::now();
-    double elapsed = chrono::duration_cast<chrono::milliseconds>(b-a).count();
-    cout << "temps pour build ecoli : " << elapsed << " millisecondes" << endl;
-    outBuildTime << elapsed << endl;
-    outBuildTime.close();
-
-    //requête et mesure du temps
-    ofstream outQuery(params[3], ios::app);
     double ret = run(params[2], cb_ecoli);
-    cout << "temps pour requête : " << ret << " microsecondes" << endl;
-    outQuery << ret << endl;
-    outQuery.close();
     return 0;
 }

@@ -92,7 +92,8 @@ rule bcalm_preprocess:
 rule prepare_tools:
   input:
     f"{WORKDIR}/tools/blight/bench_blight",
-    f"{WORKDIR}/tools/jellyfish-2.3.0/bin/jellyfish"
+    f"{WORKDIR}/tools/jellyfish-2.3.0/bin/jellyfish",
+    f"{WORKDIR}/tools/CBl/contains"
   
 
 # Download Blight and compile
@@ -138,6 +139,23 @@ rule setup_bcalm:
     "git clone --recursive https://github.com/GATB/bcalm && "
     "cd bcalm && "
     "mkdir build && cd build && cmake .. && make -j {threads}"
+
+
+rule setup_CBl:
+  input:
+    "{path}/tools/.ready.lock"
+  output:
+    "{path}/tools/CBl/contains"
+  threads:
+    1
+  shell:
+    "rm -rf {wildcards.path}/tools/CBl && mkdir {wildcards.path}/tools/CBl && "
+    "cd {wildcards.path}/tools/CBl && "
+    "git clone --recursive https://github.com/yoann-dufresne/ConwayBromageLib.git && "
+    "cd - && "
+    "cp CBl_scripts/* {wildcards.path}/tools/CBl/ && "
+    "cd {wildcards.path}/tools/CBl && "
+    "cmake . && make -j {threads}"    
 
 
 # Create directory tree

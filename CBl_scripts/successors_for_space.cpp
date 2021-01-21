@@ -10,7 +10,7 @@
 #include <random>
 #include <chrono>
 #include "ConwayBromageLib.h"
-#include <lest/lest_basic.hpp>
+// #include <lest/lest_basic.hpp>
 #include <vector>
 #include <bitset>
 #include <sdsl/sd_vector.hpp>
@@ -20,7 +20,7 @@
 
 using namespace std;
 using namespace sdsl;
-using namespace lest;
+// using namespace lest;
 using namespace std::chrono;
 
 // k-mer size : always 31 mers
@@ -57,7 +57,7 @@ double run(string query, const ConwayBromage &cb){
     auto a = chrono::high_resolution_clock::now();
     uint64_t len = v.size();
     for(int i = 0; i < len; i++){
-        cb.contains(v[i]);
+        cb.successors(v[i]);
     }
     auto b = chrono::high_resolution_clock::now();
     double elapsed = chrono::duration_cast<chrono::microseconds>(b-a).count();
@@ -77,6 +77,8 @@ int main(int n, char *params[]){
     cout << "Nombre de parametre d'entrees : " << n << endl;
     KmerManipulatorACTG km_ecoli(SIZE);
     ConwayBromage cb_ecoli (file, &km_ecoli);
+
+    //requête et mesure du temps
     double ret = run(params[2], cb_ecoli);
     return 0;
 }
