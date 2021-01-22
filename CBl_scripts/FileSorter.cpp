@@ -211,7 +211,7 @@ void checkIfSorted(string path, KmerManipulator* km){
 }
 
 
-int main(){
+int main(int n, char *params[]){
     KmerManipulatorACTG km(31);
 
     //produce ecoli_sorted.txt

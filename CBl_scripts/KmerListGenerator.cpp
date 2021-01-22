@@ -56,7 +56,7 @@ void generateGenomicKmers(string fastqFilePath, string queryFile, int KmerSize, 
             uint64_t numberOfKmerInSequence = 1 + (sequence.size()-KmerSize);
             for(uint64_t i = 0; i < numberOfKmerInSequence; i++){
                 string kmer = sequence.substr(i, KmerSize);
-                fo << ">kmer" << cpt << "\n" << kmer << endl;
+                fo << ">kmer" << cpt << endl << kmer << endl;
                 if(cpt == numberOfKmer){
                     fi.close();
                     fo.close();
@@ -91,7 +91,7 @@ void generateRandomKmers(string outputFile, uint64_t numberOfKmer, int kmerSize)
 
     //fill the list
     for(uint64_t i = 0; i < numberOfKmer; i++){
-        fo << ">kmer" << (i+1) << "\n" << km.decode(random(gen)) << endl;
+        fo << ">kmer" << (i+1) << endl << km.decode(random(gen)) << endl;
     }
 
     cout << "Random k-mers file generated : " << outputFile << endl;
@@ -127,7 +127,7 @@ void generateRandomExistingKmers(string inputFile, string outputFile, KmerManipu
 
     //write random existing kmers in file
     for(uint64_t i = 0; i < numberOfKmer; i++)
-        fo << ">kmer" << (i+1) << "\n" << km->decode(existingKmers[random(gen)]) << endl; //pick a random kmer in existing ones
+        fo << ">kmer" << (i+1) << endl << km->decode(existingKmers[random(gen)]) << endl; //pick a random kmer in existing ones
 
     fi.close();
     fo.close();
@@ -135,9 +135,8 @@ void generateRandomExistingKmers(string inputFile, string outputFile, KmerManipu
 }    
 
 //EXAMPLE OF USE
-int main(){
-    KmerManipulatorACTG km30(30);
-    KmerManipulatorACTG km31(31);
+int main(int n, char *params[]){
+    // KmerManipulatorACTG km31(31);
 
     /*---------------------------
       Generation of genomic Kmers
@@ -145,21 +144,28 @@ int main(){
     /*
      * params[1] : le fichier sous forme de .fa
      * params[2] : le fichier sous forme txt
+     * params[3] : prefix of output files
+     * params[4] : kmer size
      */
+    // Preprocessing of values
+    string prefix(params[3]);
+    int k = atoi(params[4]);
+
     int numberOfKmer = 1000000;
-    generateGenomicKmers(params[1], "genomic_query.fastq", 30, numberOfKmer);
+    generateGenomicKmers(params[1], prefix + ".genomic_query.fasta", k, numberOfKmer);
     //vector<uint64_t> genomicKmers = getKmersFromQueryFile("./query/queryGenomicKmers_human.fastq", &km30);
 
     /*---------------------------
       Generation of random Kmers
       ---------------------------*/
-    generateRandomKmers("full_random_query.fastq", numberOfKmer, 30);
+    generateRandomKmers(prefix + ".full_random_query.fasta", numberOfKmer, k);
     //vector<uint64_t> randomKmers = getKmersFromQueryFile("./query/queryRandomKmers.fastq", &km30);
 
     /*---------------------------
       Generation of random existing Kmers
       ---------------------------*/
-    generateRandomExistingKmers(params[2], "random_present_query.fastq", &km30, numberOfKmer);
+    KmerManipulatorACTG km(k);
+    generateRandomExistingKmers(params[2], prefix + ".random_present_query.fasta", &km, numberOfKmer);
     
     //check if all are present (just as a precaution, not mandatory)
     /*ifstream f("./ecoli_sorted.txt", ios::in);
