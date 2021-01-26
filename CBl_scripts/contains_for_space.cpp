@@ -26,6 +26,8 @@ using namespace std::chrono;
 // k-mer size : always 31 mers
 #define SIZE 31
 
+uint32_t size = 0;
+
 /**
 * Returns a list of k-mers contained in a query file.
 * @param fastqFilePath - query file
@@ -50,7 +52,7 @@ vector<uint64_t> getKmersFromQueryFile(string fastqFilePath, KmerManipulator *km
 
 double run(string query, const ConwayBromage &cb){
     ifstream fi(query);
-    KmerManipulatorACTG km30(30);
+    KmerManipulatorACTG km30(size-1);
     vector<uint64_t> v = getKmersFromQueryFile(query, &km30);
     fi.close();
 
@@ -70,12 +72,13 @@ double run(string query, const ConwayBromage &cb){
  * */
 int main(int n, char *params[]){
     //k-mer file reading
+  size = params[5];
     ifstream file(params[1], ios::in);
     /*for(int i = 0 ; i < n ; i++){
         cout << params[i] << endl;
     }*/
     cout << "Nombre de parametre d'entrees : " << n << endl;
-    KmerManipulatorACTG km_ecoli(SIZE);
+    KmerManipulatorACTG km_ecoli(size);
     ConwayBromage cb_ecoli (file, &km_ecoli);
     double ret = run(params[2], cb_ecoli);
     return 0;
