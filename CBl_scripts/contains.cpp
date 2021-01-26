@@ -24,7 +24,10 @@ using namespace sdsl;
 using namespace std::chrono;
 
 // k-mer size : always 31 mers
-#define SIZE 31
+//#define SIZE 31
+
+//taile dynamique
+uint32_t size = 0;
 
 /**
 * Returns a list of k-mers contained in a query file.
@@ -50,7 +53,7 @@ vector<uint64_t> getKmersFromQueryFile(string fastqFilePath, KmerManipulator *km
 
 double run(string query, const ConwayBromage &cb){
     ifstream fi(query);
-    KmerManipulatorACTG km30(30);
+    KmerManipulatorACTG km30(size-1);
     vector<uint64_t> v = getKmersFromQueryFile(query, &km30);
     fi.close();
 
@@ -69,9 +72,11 @@ double run(string query, const ConwayBromage &cb){
  * params[0] : fichier de test
  * params[1] : écriture des résultats pour temps de query
  * params[2] : écriture des résultats pour temps de builds
+ * params[5] : taille des k-mers
  * */
 int main(int n, char *params[]){
     //k-mer file reading
+  size = params[5];  //mise en place de la taille
     ifstream file(params[1], ios::in);
     /*for(int i = 0 ; i < n ; i++){
         cout << params[i] << endl;
@@ -79,7 +84,7 @@ int main(int n, char *params[]){
     cout << "Nombre de parametre d'entrees : " << n << endl;
     ofstream outBuildTime(params[4], ios::app);
     //définition gestionnaire de k-mers
-    KmerManipulatorACTG km_ecoli(SIZE);
+    KmerManipulatorACTG km_ecoli(size);
     //création de l'objet et mesure du temps
     auto a = chrono::high_resolution_clock::now();
     ConwayBromage cb_ecoli (file, &km_ecoli);

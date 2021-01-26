@@ -212,7 +212,7 @@ void checkIfSorted(string path, KmerManipulator* km){
 
 
 int main(int n, char *params[]){
-    KmerManipulatorACTG km(31);
+    KmerManipulatorACTG km(params[3]);
 
     //produce ecoli_sorted.txt
     sortFile(params[1], params[2], &km);
