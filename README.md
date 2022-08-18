@@ -2,19 +2,17 @@
 # Download and configure tools for experiments
 
 ## Dependancies
-
-Python:
-- Snakemake
-- mprof  
-other:
-- wget
-- tar
-- git
+- nextflow
+- Python
 - cmake
 - gcc
 
-## Setup env
+## Software tested against it 
+- Bifrost
+- sshash 
 
+
+## drawing time graph
 ```bash
-  snakemake prepare_tools --cores 4
+  python3 graph.py dirname
 ```

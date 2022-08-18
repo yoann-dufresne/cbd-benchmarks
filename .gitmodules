@@ -1,0 +1,3 @@
+[submodule "cbd"]
+	path = cbd
+	url = https://github.com/yoann-dufresne/cbd.git
