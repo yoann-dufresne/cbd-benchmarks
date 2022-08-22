@@ -8,8 +8,10 @@
 - gcc
 
 ## Software tested against it 
-- Bifrost
-- sshash 
+- Bifrost(https://github.com/pmelsted/bifrost)
+- sshash(https://github.com/jermp/sshash)
+- Themisto(https://github.com/algbio/themisto)
+- Metagraph(https://github.com/ratschlab/metagraph)
 
 
 ## drawing time graph

@@ -1,5 +1,3 @@
-#snakemake
-.snakemake/
-
-#project related
-bench/
+Makefile
+CMake*
+bin/*
