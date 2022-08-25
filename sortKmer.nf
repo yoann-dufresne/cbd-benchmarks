@@ -1,8 +1,10 @@
 #!/usr/bin/env nextflow
 
-data=Channel.fromPath('/home/oceane/dev/data/*.fasta')
+params.data=Channel.fromPath('/home/oceane/dev/data/*.fasta')
 
-
+/*
+this process take the fasta file and process trough KMC(-fm for fasta file and -fq for Fastq)
+*/
 process countKmer {         
     input :
     path dataentry from data
@@ -18,7 +20,9 @@ process countKmer {
     kmc -k31 -fm -ci1 ${dataentry} ${dataentry.baseName} .
     """
 }
-
+/*
+this process transfom the kmc output in a list of kmer in Asci
+*/
 process convert {
     input :                                                                      
     tuple file(pre), file(suf) from bin
@@ -34,7 +38,9 @@ process convert {
     """
 }
 
-//sort les kmer après qu'ils ait été mis en forme 
+/*
+this process sort the kmer file 
+*/
 process sortKmer { 
     publishDir "/home/oceane/dev/sorted/", mode: 'link' 
                                                                                                                    

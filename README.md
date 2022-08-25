@@ -1,6 +1,4 @@
 
-# Download and configure tools for experiments
-
 ## Dependancies
 - nextflow
 - Python
@@ -18,3 +16,6 @@
 ```bash
   python3 graph.py dirname
 ```
+
+## instruction
+all path passed in argument must be absolute, nextflow don't take relative path with arguments 
