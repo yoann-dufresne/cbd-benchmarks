@@ -5,6 +5,7 @@ inputdata
     .combine(kmer)
     .combine(number)
     .set{inputdata}
+//time the duration needed for the query to return a answer
 process querry{
     publishDir "./themistotimetest", mode: 'link'
     input:
@@ -18,6 +19,6 @@ process querry{
         echo ">" >>kmers.fa
         shuf ${kmer} -n 1 >> kmers.fa
     done
-    themisto pseudoalign --query-file kmers.fa --index-prefix ${index}  --out-file themistotimetest${number}.txt
+    time themisto pseudoalign --query-file kmers.fa --index-prefix ${index}  --out-file themistotimetest${number}.txt
     """
 }

@@ -1,33 +1,21 @@
-#!/usr/bin/env nextflow
-/*data=Channel.fromPath("")
-threshold=["1","2"]
-data
-    .combine(threshold)
-    .set{data}
-process bcalm{
+data=Channel.fromPath("./list-meta")// the data you want to process
+process cuttlefish{
+    publishDir "./cuttlemeta", mode: 'link'
     input:
-    tuple file(in), val(a) from data
+    file(list) from data
     output:
-    tuple file("threshold${a}${in}"),val(a) into boutput
+    file("${list}.fa") into coutput
+    memory 1024.GB
+    cpus 32
     script:
-    """ 
-    bcalm -in ${in} -kmer-size 31 -abundance-min ${a} -out threshold${a}${in}
     """
+    cuttlefish build -l ${list} -o ${list}  -k 31 --read -c 1 -m 1024 -t 32
+    """
+    //change the -l to -s if using only one file in entry and not a list of file 
 }
-process UST{
-    input:
-    tuple file(boutput),val(a) from boutput
-    output:
-    tuple file(${boutput}.ust.fa),val(a) into uoutput
-    script:
-    """
-    ust -k 31 -i ${boutput}
-    """
-}*/
-uoutput=Channel.fromPath("./threshold2list-meta.unitigs.fa.ust.fa")
 process sshhash{
     input:
-    file(in) from uoutput
+    file(in) from coutput
     output:
 
     memory 500.GB

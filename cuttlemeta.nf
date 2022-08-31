@@ -1,4 +1,5 @@
 data=Channel.fromPath("./list-meta")
+//used to build a graph with cuttlefish, was 
 process cuttlefish{
     publishDir "./cuttlemeta", mode: 'link'
     input:

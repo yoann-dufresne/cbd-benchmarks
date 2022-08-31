@@ -1,4 +1,5 @@
 data=Channel.fromPath("./metacuttle.fa")
+//build a themisto index from the input
 process themisto{
     publishDir "themisto", mode: 'link'
     input:
