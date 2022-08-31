@@ -30,12 +30,20 @@ you need to have installed the different software for using the different pipeli
 all path passed in argument must be absolute, nextflow don't take relative path with arguments 
 
 ## what each pipeline do
-requestthemisto.nf give the time needed to querry if some kmer exit for a themisto index
-sortKmer take a file of sequence and convert it into a sorted list of kmer
-sshashquerry give the time needed to querry if some kmer exit for a sshash index
-sshashtest.nf build a index with sshash by using cuttlefish to preprocess the sequence
-themistotest.nf build a index with sshash by using cuttlefish to preprocess the sequence
-timetest.nf do request test on CBD on different percentage of kmer existing
-metagraphtest.nf build a metagraph and annotate it from sequence 
-bifrosttest.sh build a bifrost graph 
-bifrosttimetest.nf give the time needed to querry a number of kmer on a bifrost graph
+sortKmer take a file of sequence and convert it into a sorted list of kmer for building of cbd
+
+
+build: to build the index/graph
+buildsshash.nf for sshash index
+buildthemisto.nf for themisto index
+buildmetagraph.nf for metagraph graph
+buildbifrost.sh for bifrost graph 
+
+querry: to test the time need to querry on each type of graph
+querrythemisto.nf fo themisto
+querrysshash.nf for Sshash
+querrybifrost.nf for Bifrost
+querrymetagraph
+querrycbd.nf  for CBD(build it too)
+
+
