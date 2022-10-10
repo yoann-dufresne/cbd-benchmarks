@@ -10,12 +10,15 @@ process count_kmers {
     val k
     val org
 
-    memory { (fasta.size() * 2) * 1.B }
+    memory { (fasta.size() * 100) * 1.B < 2.GB ? 2.GB : (fasta.size() * 100) * 1.B }
 
     script:
+    mem = task.memory.toGiga()
     """
     kmc -k${k} \
         -ci1 \
+        -m${mem} \
+        -sm \
         -fm \
         ${fasta} \
         kmers \
@@ -37,7 +40,7 @@ process export_kmers {
     val k
     val org
 
-    memory { (kmc_pre.size() * 4) * 1.B }
+    memory { (kmc_pre.size() * 100) * 1.B }
 
     script:
     """
@@ -59,7 +62,7 @@ process sort_kmers {
     output:
     path "sorted.kmers.${k}.${org}.txt"
 
-    memory { (kmers.size() * 5) * 1.B }
+    memory { (kmers.size() * 50) * 1.B }
     cpus 16
 
     script:

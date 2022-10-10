@@ -1,7 +1,11 @@
 include {count_kmers; export_kmers; sort_kmers} from "./modules/kmer_utils.nf"
 
+
 nextflow.enable.dsl=2
 dataDir = "./data"
+
+params.reference = "$dataDir/sarscov2.fa"
+params.organism = file(params.reference).getSimpleName()
 
 workflow sorted {
     take: 
@@ -32,10 +36,9 @@ workflow unsorted {
 
 workflow {
     // Input files
-    reference = Channel.fromPath("./data/sarscov2.fa")
-    org = "sarscov2"
+    reference = Channel.fromPath(params.reference)
 
-    sorted(reference, org, 31, dataDir)
-    unsorted(reference, org, 30, dataDir)
+    sorted(reference, params.organism, 31, dataDir)
+    unsorted(reference, params.organism, 30, dataDir)
 
 }
