@@ -3,33 +3,43 @@
 import argparse
 import json
 
+KEYS_TO_KEEP = {
+    "User time (seconds)": "usr_time",
+    "System time (seconds)": "sys_time",
+    "Maximum resident set size (kbytes)": "max_rss",
+    "Average resident set size (kbytes)": "avg_rss",
+    "Disk size": "disk",
+    "Task": "task",
+    "Organism": "organism",
+}
+
 
 def parse_report(filename):
+
     stats = dict()
     with open(filename, "r") as file:
-        for i, line in enumerate(file):
-            if i == 0:
-                stats["command"] = line.split('"')[1].split()[0]
-            elif i == 1:
-                stats["usr_time"] = float(line.split(":")[1])
-            elif i == 2:
-                stats["sys_time"] = float(line.split(":")[1])
-            elif i == 9:
-                stats["max_RSS"] = 1000 * int(line.split(":")[1])
-            elif i == 10:
-                stats["avg_RSS"] = 1000 * int(line.split(":")[1])
-            elif i == 23:
-                stats["disk_size"] = int(line.split(":")[1])
+        for line in file:
+            k, v = line.strip().split(": ")
+            if k in KEYS_TO_KEEP:
+                stats[KEYS_TO_KEEP[k]] = v
 
     return stats
 
-def get_args():
-    parser = argparse.ArgumentParser(description="Extract relevant info from /usr/bin/time reports")
 
-    parser.add_argument("-o", "--out", help="Output file (default stdout)", required=False)
-    parser.add_argument("files", metavar="FILE", help="Reports from /usr/bin/time", nargs="+")
+def get_args():
+    parser = argparse.ArgumentParser(
+        description="Extract relevant info from /usr/bin/time reports"
+    )
+
+    parser.add_argument(
+        "-o", "--out", help="Output file (default stdout)", required=False
+    )
+    parser.add_argument(
+        "files", metavar="FILE", help="Reports from /usr/bin/time", nargs="+"
+    )
 
     return parser.parse_args()
+
 
 def main():
 
