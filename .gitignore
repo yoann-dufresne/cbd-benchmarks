@@ -11,3 +11,4 @@ data/
 # nextflow
 .nextflow/
 .nextflow*
+nextflow.config

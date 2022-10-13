@@ -11,6 +11,7 @@ KEYS_TO_KEEP = {
     "Disk size": "disk",
     "Task": "task",
     "Organism": "organism",
+    "Benchmark": "benchmark",
 }
 
 
