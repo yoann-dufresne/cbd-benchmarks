@@ -6,7 +6,6 @@ process build_cbd {
     val org
     val dir
 
-    publishDir "${dir}/${org}/CBD", pattern: "*.txt"
     output:
     path "cbd.dbg", emit: index
     path "build_cbd.txt", emit: report
@@ -26,6 +25,8 @@ process build_cbd {
 
 
 process query_contains_cbd {
+    label "same_node"
+
     input:
     path index
     path kmers
@@ -33,7 +34,6 @@ process query_contains_cbd {
     each repeat
     val dir
 
-    publishDir "${dir}/${org}/CBD"
     output:
     path "query_contains_cbd_${repeat}.txt", emit: report
 
@@ -45,10 +45,13 @@ process query_contains_cbd {
 
     echo "\tTask: CBD contains" >> query_contains_cbd_${repeat}.txt
     echo "\tOrganism: ${org}" >> query_contains_cbd_${repeat}.txt
+    echo "\tBenchmark: ${kmers.baseName}" >> query_contains_cbd_${repeat}.txt
     """
 }
 
 process query_neighbours_cbd {
+    label "same_node"
+
     input:
     path index
     path kmers
@@ -56,7 +59,6 @@ process query_neighbours_cbd {
     each repeat
     val dir
 
-    publishDir "${dir}/${org}/CBD"
     output:
     path "query_neighbours_cbd_${repeat}.txt", emit: report
 
@@ -69,17 +71,19 @@ process query_neighbours_cbd {
 
     echo "\tTask: CBD neighbours" >> query_neighbours_cbd_${repeat}.txt
     echo "\tOrganism: ${org}" >> query_neighbours_cbd_${repeat}.txt
+    echo "\tBenchmark: ${kmers.baseName}" >> query_neighbours_cbd_${repeat}.txt
     """
 }
 
 process load_cbd {
+    label "same_node"
+
     input:
     path index
     val org
     each repeat
     val dir
 
-    publishDir "${dir}/${org}/CBD"
     output:
     path "load_cbd_${repeat}.txt", emit: report
 
