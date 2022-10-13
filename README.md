@@ -6,6 +6,9 @@ This repository contains Nextflow pipelines to benchmark the [CBD de bruijn grap
 - [Nextflow](https://www.nextflow.io/), with support for [DSL2](https://www.nextflow.io/docs/latest/dsl2.html) 
 - [Python](https://www.python.org/) >= 3.6
 
+The included external binaries *(`kmc`, `bcalm2`, `themisto`, `metagraph`, `sshash` and `bifrost`)* are compiled for linux_x86_64 distributions.  
+Our custom tools can be compiled from source from [yoann-dufresne/cbd](https://github.com/yoann-dufresne/cbd) *( for `buildIndex`, `loadIndex` and `queryIndex`)* and [lucblassel/kmer-generator](https://github.com/lucblassel/kmer-generator). 
+
 ---
 
 ## Prepare sequence data
@@ -30,7 +33,17 @@ The benchmarking pipeline expects to find the reference fasta file in the `data/
 ---
 
 ## Generate query data
-**TODO**
+
+A pipeline and a CLI tool are included to generate static benchmarking datasets. You can run the pipelines with the following command:
+
+```
+nextflow run generate-benchmarks.nf --organism <organism> 
+```
+
+It expects the previous directory structure and will use the `data/<organism>/kmers.30.<organism>.txt` file as the source of "real" k-mers.  
+This pipeline generates benchmarking datasets that are made up of real and synthetic k-mers, with a specific percentage of "real" k-mers. This will create files named `data/<organism>/bench/<organism>-<real_kmer_fraction>-<repeat_number>.kmers`. 
+You can specify the percentage of "real" k-mers you want in each dataset by passing values between 0 and 1, separated by spaces; *e.g.*: `--percent "0.1 0.2 0.3"`, will generate 3 datasets with 10%, 20% and 30% of real k-mers respectively. 
+
 
 ---
 
