@@ -1,6 +1,8 @@
 
 
 process build_cbd {
+    label "same_node"
+
     input:
     path sorted_kmers
     val org

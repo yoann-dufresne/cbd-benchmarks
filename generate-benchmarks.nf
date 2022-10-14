@@ -2,9 +2,8 @@ nextflow.enable.dsl=2
 
 params.organism = "sarscov2"
 params.resDir = "./data"
-params.percents = "0 0.25 0.5 0.75 1"
-params.repeats = 3
-params.maxsize = 2000000
+params.percents = "0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1"
+params.maxsize = 4000000
 
 // Check that user specified values are correct and parse percentages values
 def validate_percentages( percent_values) {
@@ -50,28 +49,38 @@ process generate_dataset {
     each percent
     val dir
     val size
-    each repeat
 
-    publishDir "${dir}/${org}/bench/", mode: "link"
+    publishDir "${dir}/${org}/bench/", mode: "move"
     output:
-    path "${org}-${percent}-${repeat}.kmers"
+    path "${org}-${percent}.kmers"
 
     script:
-    """
-    kmer-generator mix \
-        --file ${kmers} \
-        --kmer-size 30 \
-        --query-number ${size} \
-        --percent ${percent} \
-        --out ${org}-${percent}-${repeat}.kmers
-    """
+    if (percent == 0)
+        """
+        kmer-generator generate \
+            --kmer-size 30 \
+            --query-number ${size} \
+            --out ${org}-${percent}.kmers
+        """
+    else if (percent != 1)
+        """
+        kmer-generator mix \
+            --file ${kmers} \
+            --kmer-size 30 \
+            --query-number ${size} \
+            --percent ${percent} \
+            --out ${org}-${percent}.kmers
+        """
+    else
+        """
+        shuf -n ${size} ${kmers} > ${org}-${percent}.kmers
+        """
 }
 
 workflow {
 
     kmers = file("./data/${params.organism}/kmers.30.${params.organism}.txt")
     percents = channel.from(percent_values)
-    repeats = channel.from(1..params.repeats)
 
     (success, num) = count_kmers(kmers)
     if (!success) {
@@ -79,9 +88,9 @@ workflow {
     }
 
     if (num > params.maxsize) {
-        generate_dataset(kmers, params.organism, percents, params.resDir, params.maxsize, repeats)
+        generate_dataset(kmers, params.organism, percents, params.resDir, params.maxsize)
     } else {
-        generate_dataset(kmers, params.organism, percents, params.resDir, num, repeats)
+        generate_dataset(kmers, params.organism, percents, params.resDir, num)
     }
 
 }

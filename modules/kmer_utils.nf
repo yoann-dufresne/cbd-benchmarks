@@ -37,7 +37,7 @@ process export_kmers {
     val org
     val outputDir
 
-    publishDir "${outputDir}/${org}", mode: "link"
+    publishDir "${outputDir}/${org}", mode: "copy"
     output:
     path "kmers.${k}.${org}.txt"
     val k
@@ -63,7 +63,7 @@ process sort_kmers {
     val org
     val outputDir
 
-    publishDir "${outputDir}/${org}", mode: "link"
+    publishDir "${outputDir}/${org}", mode: "move"
     output:
     path "sorted.kmers.${k}.${org}.txt"
 

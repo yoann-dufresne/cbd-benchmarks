@@ -10,7 +10,7 @@ def expected_tools = [
 
 params.tool = "cbd"
 params.organism = "sarscov2"
-params.repeats = 5
+params.repeats = 30
 params.resDir = "./results"
 
 if (!expected_tools.contains(params.tool)) {
