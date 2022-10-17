@@ -1,7 +1,7 @@
 nextflow.enable.dsl=2
 
 params.organism = "sarscov2"
-params.resDir = "./data"
+params.dataDir = "./data"
 params.percents = "0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1"
 params.maxsize = 4000000
 
@@ -77,9 +77,26 @@ process generate_dataset {
         """
 }
 
+process generate_report {
+    input:
+    val dir
+    val org
+    val size
+
+    publishDir "${dir}/${org}/", mode: "copy"
+    output:
+    path "${org}.benchmark_size.json"
+
+    script:
+    """
+    echo '{"organism": "${org}", "size": ${size}}' > ${org}.benchmark_size.json
+    """
+
+}
+
 workflow {
 
-    kmers = file("./data/${params.organism}/kmers.30.${params.organism}.txt")
+    kmers = file("${params.dataDir}/${params.organism}/kmers.30.${params.organism}.txt")
     percents = channel.from(percent_values)
 
     (success, num) = count_kmers(kmers)
@@ -88,9 +105,12 @@ workflow {
     }
 
     if (num > params.maxsize) {
-        generate_dataset(kmers, params.organism, percents, params.resDir, params.maxsize)
+        generate_dataset(kmers, params.organism, percents, params.dataDir, params.maxsize)
+        generate_report(params.dataDir, params.organism, params.maxsize)
     } else {
-        generate_dataset(kmers, params.organism, percents, params.resDir, num)
+        generate_dataset(kmers, params.organism, percents, params.dataDir, num)
+        generate_report(params.dataDir, params.organism, num)
     }
 
+    
 }
