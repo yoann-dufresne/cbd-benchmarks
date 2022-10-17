@@ -1,44 +1,40 @@
-include {count_kmers; export_kmers; sort_kmers} from "./modules/kmer_utils.nf"
-
-
 nextflow.enable.dsl=2
-dataDir = "./data"
 
-params.reference = "$dataDir/sarscov2.fa"
-params.organism = file(params.reference).getSimpleName()
+include {single; single as single_s} from "./modules/kmer_utils.nf"
+include {multiple; multiple as multiple_s} from "./modules/kmer_utils.nf"
+include {guess_format} from "./modules/kmer_utils.nf"
 
-workflow sorted {
-    take: 
-        fasta
-        org
-        val
-        output_dir
-    main:
-        count_kmers(fasta, val, org)
-        export_kmers(count_kmers.out[0], count_kmers.out[1], count_kmers.out[2], count_kmers.out[3], output_dir)
-        sort_kmers(export_kmers.out[0], export_kmers.out[1], export_kmers.out[2], output_dir)
-    emit:
-        sorted = sort_kmers.out[0]
+params.dataDir = "./data"
+params.reference = "${params.dataDir}/sarscov2.fa"
+
+// Check if single or multiple reference file(s)
+if (file(params.reference) in List) {
+    params.num = file(params.reference).size
+} else {
+    params.num = 1
 }
 
-workflow unsorted {
-    take: 
-        fasta
-        org
-        val
-        output_dir
-    main:
-        count_kmers(fasta, val, org)
-        export_kmers(count_kmers.out[0], count_kmers.out[1], count_kmers.out[2], count_kmers.out[3], output_dir)
-    emit:
-        sorted = export_kmers.out[0]
+// Enforce <organism> specification if multiple reference files
+if (params.num > 1) {
+    if (!params.organism) {
+        exit 1, "[Pipeline error] `--organism` must be specified when using multiple input files"
+    }
+} else {
+    params.organism = file(params.reference).getSimpleName()
 }
 
 workflow {
-    // Input files
-    reference = Channel.fromPath(params.reference)
 
-    sorted(reference, params.organism, 31, dataDir)
-    unsorted(reference, params.organism, 30, dataDir)
+    reference = Channel.fromPath(params.reference)
+    format = reference.map{ guess_format(it) }
+    meta_c = Channel.from([[31, true], [30, false]])
+
+   if (params.num == 1) {
+        single(reference, format, params.organism, 30, params.dataDir, false)
+        single_s(reference, format, params.organism, 31, params.dataDir, true)
+    } else {
+        multiple(reference, format, params.organism, 30, params.dataDir, false)
+        multiple_s(reference, format, params.organism, 31, params.dataDir, true)
+    }
 
 }
