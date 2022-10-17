@@ -12,6 +12,8 @@ process build_cbd {
     path "cbd.dbg", emit: index
     path "build_cbd.txt", emit: report
 
+    memory 50.GB
+
     script:
     """
     /usr/bin/time -v -o build_cbd.txt buildIndex \
@@ -39,6 +41,10 @@ process query_contains_cbd {
     output:
     path "query_contains_cbd_${repeat}.txt", emit: report
 
+    memory {
+        index.size() * 1.B + 2.GB
+    }
+
     script:
     """
     /usr/bin/time -v -o query_contains_cbd_${repeat}.txt queryIndex \
@@ -64,6 +70,10 @@ process query_neighbours_cbd {
     output:
     path "query_neighbours_cbd_${repeat}.txt", emit: report
 
+    memory {
+        index.size() * 1.B + 2.GB
+    }
+
     script:
     """
     /usr/bin/time -v -o query_neighbours_cbd_${repeat}.txt queryIndex \
@@ -88,6 +98,10 @@ process load_cbd {
 
     output:
     path "load_cbd_${repeat}.txt", emit: report
+
+    memory {
+        index.size() * 1.B + 2.GB
+    }
 
     script:
     """

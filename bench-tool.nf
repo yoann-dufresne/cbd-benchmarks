@@ -12,6 +12,7 @@ params.tool = "cbd"
 params.organism = "sarscov2"
 params.repeats = 30
 params.resDir = "./results"
+params.dataDir = "./data"
 
 if (!expected_tools.contains(params.tool)) {
     exit 1, "[Pipeline error] $params.tool is not an available tool to benchmark. Available tools are: $expected_tools"
@@ -37,9 +38,9 @@ process collect_reports {
 
 workflow {
 
-    fasta = channel.fromPath("./data/${params.organism}.fa")
-    sorted_kmers_31 = channel.fromPath("./data/${params.organism}/sorted.kmers.31.${params.organism}.txt")
-    benchmarks = channel.fromPath("./data/${params.organism}/bench/*.kmers")
+    fasta = channel.fromPath("${params.dataDir}/${params.organism}.fa")
+    sorted_kmers_31 = channel.fromPath("${params.dataDir}/${params.organism}/sorted.kmers.31.${params.organism}.txt")
+    benchmarks = channel.fromPath("${params.dataDir}/${params.organism}/bench/*.kmers")
     repeats = channel.from(1..params.repeats)
 
     if (params.tool == "themisto") {
