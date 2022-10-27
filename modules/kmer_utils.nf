@@ -1,4 +1,5 @@
 process count_kmers {
+    label "same_node"
     input:
     path seqs
     val k
@@ -11,10 +12,12 @@ process count_kmers {
     val k
     val org
 
-    memory { 
-        (seqs.size() * 12) * 1.B < 4.GB ? 
-            4.GB : (seqs.size() * 12) * 1.B 
+    memory {
+        task.attempt * (seqs.size() * 20) * 1.B < 4.GB ?
+            4.GB : task.attempt * (seqs.size() * 20) * 1.B
     }
+
+    maxRetries 3
 
     script:
     mem = task.memory.toGiga() - 2
@@ -36,6 +39,7 @@ process merge_kmc_dbs {
     path "*.kmc_suf"
     val k
     val org
+    val num
 
     output:
     path "joined.kmc_pre"
@@ -43,7 +47,7 @@ process merge_kmc_dbs {
     val k
     val org
 
-    memory 20.GB
+    memory { num * 10.GB }
 
     script:
     """
@@ -67,8 +71,8 @@ process export_kmers {
     val k
     val org
 
-    memory { 
-        (kmc_pre.size() + kmc_shuf.size()) * 10 * 1.B < 3.GB ? 
+    memory {
+        (kmc_pre.size() + kmc_shuf.size()) * 10 * 1.B < 3.GB ?
             3.GB : (kmc_pre.size() + kmc_shuf.size()) * 10 * 1.B
         }
 
@@ -97,8 +101,8 @@ process export_sorted_kmers {
     val k
     val org
 
-    memory { 
-        (kmc_pre.size() + kmc_shuf.size()) * 10 * 1.B < 3.GB ? 
+    memory {
+        (kmc_pre.size() + kmc_shuf.size()) * 10 * 1.B < 3.GB ?
             3.GB : (kmc_pre.size() + kmc_shuf.size()) * 10 * 1.B
         }
     cpus 16
@@ -146,6 +150,7 @@ workflow multiple {
         format
         org
         k
+        num
         output_dir
         sort
     main:
@@ -154,7 +159,7 @@ workflow multiple {
         merge_kmc_dbs(
             count_kmers.out[0].collect(), // kmc_pre +
             count_kmers.out[1].collect(), // kmc_shuf +
-            k, org
+            k, org, num
         )
         if (sort) {
             export_sorted_kmers(

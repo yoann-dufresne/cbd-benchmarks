@@ -33,8 +33,8 @@ workflow {
         single(reference, format, params.organism, 30, params.dataDir, false)
         single_s(reference, format, params.organism, 31, params.dataDir, true)
     } else {
-        multiple(reference, format, params.organism, 30, params.dataDir, false)
-        multiple_s(reference, format, params.organism, 31, params.dataDir, true)
+        multiple(reference, format, params.organism, 30, params.num, params.dataDir, false)
+        multiple_s(reference, format, params.organism, 31, params.num, params.dataDir, true)
     }
 
 }
